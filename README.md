@@ -18,7 +18,7 @@ Clone repo và cài đặt các module cần thiết:
 git clone https://github.com/<your-username>/<your-repo>.git
 cd <your-repo>
 pip install -r requirements.txt
-
+```
 ## Cấu trúc thư mục
 ├── dataset/
 │   ├── online_retail.csv
@@ -31,3 +31,15 @@ pip install -r requirements.txt
 ├── visualization.py
 ├── requirements.txt
 └── README.md
+## Sử dụng
+Chạy các Makefile để thực hiện các bước phân tích:
+- Phân tích đặc điểm dữ liệu:
+```bash make characteristic
+```
+- Trực quan hóa dữ liệu:
+```bash make visualization
+```
+- Tải các module cần thiết:
+```bash make install
+```
+
