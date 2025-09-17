@@ -34,7 +34,7 @@ def generate_data():
         full_name = fake.name()
         df_customers.at[i, "Full Name"] = full_name
 
-        email = full_name.lower().replace(" ", ".") + str(random.randint(1, 100)) + "@tientruong.com"
+        email = full_name.lower().replace(" ", ".") + str(random.randint(1, 100)) + "@gmail.com"
         df_customers.at[i, "Email"] = email
 
         phone_number = fake.phone_number()
