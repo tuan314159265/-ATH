@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 df1 = pd.read_csv("dataset/online_retail.csv")
 df2 = pd.read_csv("dataset/retail_sales_dataset.csv")
