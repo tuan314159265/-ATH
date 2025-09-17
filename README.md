@@ -20,6 +20,7 @@ cd <your-repo>
 pip install -r requirements.txt
 ```
 ## Cấu trúc thư mục
+```plaintext
 ├── dataset/
 │   ├── online_retail.csv
 │   ├── retail_sales_dataset.csv
@@ -31,15 +32,18 @@ pip install -r requirements.txt
 ├── visualization.py
 ├── requirements.txt
 └── README.md
+```
 ## Sử dụng
 Chạy các Makefile để thực hiện các bước phân tích:
 - Phân tích đặc điểm dữ liệu:
-```bash make characteristic
+```bash 
+make characteristic
 ```
 - Trực quan hóa dữ liệu:
-```bash make visualization
+```bash
+make visualization
 ```
 - Tải các module cần thiết:
-```bash make install
+```bash
+make install
 ```
-
