@@ -1,11 +1,22 @@
 import src
+df_cust = src.df_cust.copy()
+df1 = src.df1.copy()
+df2 = src.df2.copy()
 
-src.df1['CustomerID'] = src.df1['CustomerID'].dropna().astype(int).astype(str)
-src.df1['CustomerID'] = "CUST" + src.df1['CustomerID']
+# Nếu chưa có prefix "CUST" thì thêm vào
+def standardize_customer_id(x):
+    # Trường hợp NaN hoặc rỗng → GUEST
+    if src.pd.isna(x) or str(x).strip() == "":
+        return "GUEST"
+    
+    x = str(x).strip()  # loại bỏ khoảng trắng thừa
+    # Nếu chưa có prefix CUST → thêm vào
+    if not x.startswith("CUST"):
+        x = "CUST" + x
+    # Nếu sau CUST chỉ có 3 chữ số → thêm "00"
+    suffix = x[4:]  # lấy phần sau CUST
+    if suffix.isdigit() and len(suffix) == 3:
+        x = "CUST" + "00" + suffix
+    return x
 
-src.src.df2['Customer ID'] = src.df2['Customer ID'].astype(str)
-for i in src.df2.index:
-    src.df2.loc[i, 'Customer ID'] = src.df2.loc[i, 'Customer ID'][:4] + "00" + src.df2.loc[i, 'Customer ID'][5:]
-
-print(src.df1['CustomerID'].head())
-print(src.df2['Customer ID'].head())
+df_cust.to_csv("new_dataset/customer_dataset.csv", index=False)

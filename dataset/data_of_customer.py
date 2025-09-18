@@ -49,6 +49,14 @@ def generate_data():
         registration_date = datetime.now() - timedelta(days=random.randint(0, 5*365))
         df_customers.at[i, "Registration Date"] = registration_date.strftime("%Y-%m-%d")
 
+        if df_customers.at[i, "Age"] == "" or pd.isna(df_customers.at[i, "Age"]):
+            age = (datetime.now().date() - birth_date).days // 365
+            df_customers.at[i, "Age"] = age
+        
+        if df_customers.at[i, "Gender"] == "":
+            gender = random.choice(["Male", "Female"])
+            df_customers.at[i, "Gender"] = gender
+
     df_customers.to_csv("customer_dataset.csv", index=False)
 
 

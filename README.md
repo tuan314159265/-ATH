@@ -15,8 +15,8 @@ Project này dùng dữ liệu bán lẻ (`online_retail.csv`, `retail_sales_dat
 Clone repo và cài đặt các module cần thiết:
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/Hasakiiiiiiii/-ATH.git
+cd -ATH
 pip install -r requirements.txt
 ```
 ## Cấu trúc thư mục
