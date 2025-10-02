@@ -2,7 +2,7 @@ import src
 
 def print_section(title):
     print("\n" + "=" * 60)
-    print(f"📊 {title}")
+    print(f"{title}")
     print("=" * 60)
 
 def overview_data(df, name):
@@ -19,7 +19,7 @@ def check_missing_values(df, name):
         print("\nPercentage of missing values:")
         print((missing / len(df) * 100).round(2))
     else:
-        print("✅ No missing values")
+        print("No missing values")
     print("Total missing values:", missing_values.sum())
 
 def check_duplicates(df, name):
