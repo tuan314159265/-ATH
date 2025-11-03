@@ -28,7 +28,7 @@ def standardize_customer_id(x):
         return "GUEST"
     x = str(x).strip()
     if x.startswith("CUST"):
-        suffix = x[4:]  
+        suffix = x[4:]
         if suffix.isdigit() and len(suffix) == 3:
             x = "CUST" + "00" + suffix
         return x
