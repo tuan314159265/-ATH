@@ -49,6 +49,24 @@ for name, cols in date_cols.items():
         if col in df.columns:
             df[col] = pd.to_datetime(df[col].apply(parse_date), errors='coerce')
 
+
+# ====== FIX DATA TYPES BEFORE MERGE ======
+
+# customer_id: ép về string
+for df in [online, customers, transactions, ord]:
+    if 'customer_id' in df.columns:
+        df['customer_id'] = df['customer_id'].astype(str).str.strip()
+
+# quantity: ép về int
+for df in [online, transactions, ord]:
+    if 'quantity' in df.columns:
+        df['quantity'] = pd.to_numeric(df['quantity'], errors='coerce').fillna(0).astype(int)
+
+# unit_price: ép về float
+for df in [online, transactions, ord]:
+    if 'unit_price' in df.columns:
+        df['unit_price'] = pd.to_numeric(df['unit_price'], errors='coerce').astype(float)
+
 # ====== MERGE ======
 df1 = pd.merge(transactions, online,
                on=['customer_id','date','quantity','unit_price'],

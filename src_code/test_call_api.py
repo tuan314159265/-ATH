@@ -8,9 +8,8 @@ try:
     response.raise_for_status() 
     data = response.json()
     print(json.dumps(data, indent=4, ensure_ascii=False))
-    with open("output.json", "w", encoding="utf-8") as f:
+    with open("new_dataset/ORD.json", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
-    print(" Đã lưu dữ liệu vào output.json")
 except requests.exceptions.RequestException as e:
     print(" Lỗi khi gọi API:", e)
 except json.JSONDecodeError:
