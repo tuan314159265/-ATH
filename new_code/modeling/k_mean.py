@@ -37,7 +37,7 @@ def clustering_and_labeling(k):
     # Map tên (Ví dụ với K=4)
     # Bạn có thể custom lại tên này
     names_map = {
-        summary.index[0]: "Champions (VIP)",
+        summary.index[0]: "Champions (VIP)", 
         summary.index[1]: "Potential Loyalists",
         summary.index[2]: "At-Risk / Hibernating",
         summary.index[3]: "Lost / Low Value"
