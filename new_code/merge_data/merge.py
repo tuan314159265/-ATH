@@ -31,6 +31,39 @@ def load_data(filename):
         print(f"⚠️ File not found: {file_path}")
         return None
 
+def generate_consistent_profiles(df):
+    """
+    Đảm bảo tính nhất quán:
+    1. Nếu Kaggle thiếu Country -> Fake Country.
+    2. Nếu 1 Customer ID xuất hiện ở nhiều nguồn -> Dùng chung 1 Age/Gender/Country.
+    """
+    print("   🔄 Harmonizing customer profiles (Age/Gender/Country)...")
+    
+    unique_ids = df['customer_id'].unique()
+    
+    # Gom nhóm theo ID để xem khách hàng này đã có thông tin gì chưa
+    existing_info = df.groupby('customer_id')[['gender', 'age', 'country']].first().reset_index()
+    
+    # 1. Fill Country (Nếu thiếu)
+    missing_country = existing_info['country'].isnull() | (existing_info['country'] == 'Unknown')
+    count = missing_country.sum()
+    if count > 0:
+        existing_info.loc[missing_country, 'country'] = [fake.country() for _ in range(count)]
+
+    # 2. Fill Gender (Nếu còn sót)
+    missing_gender = existing_info['gender'].isnull()
+    count = missing_gender.sum()
+    if count > 0:
+        existing_info.loc[missing_gender, 'gender'] = [random.choice(['Male', 'Female']) for _ in range(count)]
+
+    # 3. Fill Age (Nếu còn sót)
+    missing_age = existing_info['age'].isnull() | (existing_info['age'] == 0)
+    count = missing_age.sum()
+    if count > 0:
+        existing_info.loc[missing_age, 'age'] = [random.randint(18, 80) for _ in range(count)]
+
+    return existing_info
+
 def merge_and_fill():
     print(f"{'='*40}\n 🚀 MERGING FINAL DATASETS \n{'='*40}")
 
@@ -58,17 +91,23 @@ def merge_and_fill():
     
     full_df['customer_id'] = full_df['customer_id'].fillna(0).astype(str)
     full_df['customer_id'] = full_df['customer_id'].apply(lambda x: x.split('.')[0] if '.' in x else x)
+
+    # 4. Tái chuẩn hóa Profile
+    customer_profiles = generate_consistent_profiles(full_df)
     
     # Xóa cột cũ trong bảng giao dịch để tránh trùng lặp
     cols_to_drop = ['age', 'gender', 'country']
     full_df = full_df.drop(columns=[c for c in cols_to_drop if c in full_df.columns])
     
+    # Merge lại profile chuẩn
+    full_df = pd.merge(full_df, customer_profiles, on='customer_id', how='left')
+
     # 5. Tính toán lại Total Amount
     full_df['quantity'] = pd.to_numeric(full_df['quantity'], errors='coerce').fillna(0)
     full_df['unit_price'] = pd.to_numeric(full_df['unit_price'], errors='coerce').fillna(0)
     
     if 'total_amount' not in full_df.columns or full_df['total_amount'].isnull().any():
-        print("Recalculating Total Amount...")
+        print("💰 Recalculating Total Amount...")
         full_df['total_amount'] = full_df['quantity'] * full_df['unit_price']
 
     # 6. Sắp xếp cột (Final Layout)
@@ -80,11 +119,13 @@ def merge_and_fill():
     final_cols = [c for c in desired_order if c in full_df.columns]
     full_df = full_df[final_cols]
 
+    # 7. Lưu file
     full_df.to_csv(OUTPUT_FILE, index=False)
     print(f"\n{'='*40}")
-    print(f"File saved to: {OUTPUT_FILE}")
-    print(f"Total Rows: {len(full_df)}")
+    print(f"✅ DONE! File saved to: {OUTPUT_FILE}")
+    print(f"📉 Total Rows: {len(full_df)}")
     
+    # In thử 5 dòng đầu để kiểm tra ngày tháng
     print("\nSample Data (Check Date Format):")
     print(full_df[['date']].head())
 

@@ -1,7 +1,8 @@
-import integration.intergration as it
-import cleaning.cleaning as cls
-import merge_data.merge as merge
-import tranformation_data.tranformation as tf
+# import integration.intergration as it
+# import cleaning.cleaning as cls
+# import merge_data.merge as merge
+# import tranformation_data.tranformation as tf
+import load.ETL as etl
 import pandas as pd
 
 
@@ -13,8 +14,7 @@ print('kaggle',df1.columns.tolist(),'\n')
 print('ord',df2.columns.tolist(),'\n')
 print('uci',df3.columns.tolist(),'\n')
 
-tf.transform()
-
+etl.etl()
 
 
 
