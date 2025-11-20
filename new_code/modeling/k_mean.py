@@ -6,54 +6,82 @@ import joblib
 import warnings
 warnings.filterwarnings("ignore")
 
-# --- CONFIG ---
+# --- CẤU HÌNH ---
 INPUT_DIR = "pipeline_data"
+BEST_K = 2  # ✅ Đã đổi thành 2 theo yêu cầu
 
+def clustering_rfm_only():
+    print(f"🚀 Running K-Means (RFM Only) with K={BEST_K}...")
+    
+    # 1. Load dữ liệu
+    try:
+        # Dữ liệu đã scale (để máy học)
+        df_scaled = pd.read_csv(os.path.join(INPUT_DIR, "rfm_scaled.csv"))
+        # Dữ liệu gốc (để gán nhãn)
+        df_clean = pd.read_csv(os.path.join(INPUT_DIR, "data_clean.csv"))
+    except FileNotFoundError:
+        print("❌ Lỗi: Không tìm thấy file dữ liệu. Hãy chạy File 1 trước.")
+        return
 
-def clustering_and_labeling(k):
-    print(f"Running K-Means with K={k}...")
+    # 2. Train K-Means
+    kmeans = KMeans(n_clusters=BEST_K, random_state=42, n_init=10)
+    clusters = kmeans.fit_predict(df_scaled)
     
-    # Load data
-    data_pca = np.load(os.path.join(INPUT_DIR, "data_pca.npy"))
-    df_clean = pd.read_csv(os.path.join(INPUT_DIR, "data_clean.csv"))
-    
-    # K-Means
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-    clusters = kmeans.fit_predict(data_pca)
-    
-    # Gán cluster vào data gốc
     df_clean['Cluster'] = clusters
     
-    # --- TỰ ĐỘNG ĐẶT TÊN LABEL ---
-    print("🏷️ Assigning Business Labels...")
+    # ============================================================
+    # ĐẶT TÊN (LABELING) CHO 2 NHÓM
+    # ============================================================
+    print("🏷️  Ranking & Assigning Labels...")
+    
+    # Tính trung bình RFM
     summary = df_clean.groupby('Cluster')[['Recency', 'Frequency', 'Monetary']].mean()
     
-    # Tính điểm để xếp hạng (R thấp tốt, F cao tốt, M cao tốt)
+    # Tính điểm xếp hạng (Score)
+    # R thấp = Tốt (Rank cao)
+    # F & M cao = Tốt (Rank cao)
     summary['Score'] = (summary['Recency'].rank(ascending=False) + 
                         summary['Frequency'].rank(ascending=True) + 
                         summary['Monetary'].rank(ascending=True))
+    
+    # Sắp xếp: Cụm xịn nhất lên đầu
     summary = summary.sort_values('Score', ascending=False)
     
-    # Map tên (Ví dụ với K=4)
-    # Bạn có thể custom lại tên này
-    names_map = {
-        summary.index[0]: "Champions (VIP)", 
-        summary.index[1]: "Potential Loyalists",
-        summary.index[2]: "At-Risk / Hibernating",
-        summary.index[3]: "Lost / Low Value"
-    }
+    print("\n📊 Cluster RFM Stats (Sorted):")
+    print(summary.round(2))
 
+    # Định nghĩa tên cho 2 nhóm
+    # Nhóm 1 (Index 0): Điểm cao nhất -> VIP
+    # Nhóm 2 (Index 1): Điểm thấp hơn -> Khách thường
+    tier_names = [
+        "Diamond (High Value)",  # Nhóm Tốt
+        "Standard (Low Value)"   # Nhóm Còn lại
+    ]
+    
+    tier_mapping = {}
+    for i in range(BEST_K):
+        cluster_id = summary.index[i]
+        tier_mapping[cluster_id] = tier_names[i]
 
-    df_clean['Segment'] = df_clean['Cluster'].map(names_map)
+    # Map vào DataFrame
+    df_clean['Segment'] = df_clean['Cluster'].map(tier_mapping)
     
-    print("\n📊 Cluster Summary:")
-    print(summary)
-    print("\n👉 Segment Mapping:", names_map)
+    print("\n✅ Final Segment Mapping:")
+    for cid, lbl in tier_mapping.items():
+        print(f"   Cluster {cid} -> {lbl}")
+        
+    # In phân bố
+    print("\n📈 Distribution:")
+    print(df_clean['Segment'].value_counts(normalize=True).map('{:.1%}'.format))
+
+    # 3. Lưu kết quả
+    output_path = os.path.join(INPUT_DIR, "data_labeled.csv")
+    df_clean.to_csv(output_path, index=False)
     
-    # Lưu kết quả
-    df_clean.to_csv(os.path.join(INPUT_DIR, "data_labeled.csv"), index=False)
-    joblib.dump(kmeans, os.path.join(INPUT_DIR, "kmeans_model.joblib"))
-    print("✅ Labeled data saved!")
+    # Lưu model
+    joblib.dump(kmeans, os.path.join(INPUT_DIR, "kmeans_rfm_model.joblib"))
+    
+    print(f"\n💾 Saved labeled data to: {output_path}")
 
 if __name__ == "__main__":
-    clustering_and_labeling()
+    clustering_rfm_only()
