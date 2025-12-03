@@ -1,92 +1,102 @@
-import pandas as pd
+"""
+Train a Decision Tree and Random Forest on the labeled customer data.
+
+This script loads `modeling/pipeline_data/data_labeled.csv`, prepares numeric
+features, trains a Decision Tree and Random Forest to predict the cluster
+labels (or Segment if requested), prints evaluation metrics, and saves the
+trained models as joblib files under `modeling/pipeline_data/`.
+
+Usage:
+  python3 dec_tree+ran_for.py
+  python3 dec_tree+ran_for.py --target segment --save-dir ../modeling/pipeline_data
+"""
+
 import os
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier, export_text
+import argparse
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score
 import joblib
-import warnings
-warnings.filterwarnings("ignore")
 
-# --- CONFIG ---
-INPUT_DIR = "pipeline_data"
 
-def train_models():
-    print("🤖 Loading Labeled Data...")
-    df = pd.read_csv(os.path.join(INPUT_DIR, "data_labeled.csv"))
-    
-    # --- CHUẨN BỊ DỮ LIỆU TRAIN ---
-    # Loại bỏ các cột định danh, giữ lại các features số để máy học
-    # Lưu ý: 'Segment' là Target (Y), 'Cluster' và 'customer_id' bỏ đi
-    drop_cols = ['customer_id', 'Cluster', 'Segment']
-    
-    X = df.drop(columns=drop_cols)
-    y = df['Segment'] # Nhãn phức tạp (VD: Diamond | GenZ Women | Fashion)
-    
-    print(f"   Features used: {list(X.columns)}")
-    print(f"   Target classes: {y.nunique()} segments")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+PIPELINE_DIR = os.path.join(PROJECT_ROOT, 'modeling', 'pipeline_data')
+LABELED_CSV = os.path.join(PIPELINE_DIR, 'data_labeled.csv')
 
-    # Chia tập Train/Test
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
-    
-    # ==========================================================================
-    # PART A: DECISION TREE (MINH HỌA LOGIC PHỨC TẠP)
-    # ==========================================================================
-    print("\n🌳 Training Decision Tree (To Explain Logic)...")
-    
-    # Tăng max_depth lên 4 hoặc 5 để cây có thể 'hiểu' được cả RFM lẫn Category
-    dt = DecisionTreeClassifier(max_depth=4, random_state=42) 
-    dt.fit(X_train, y_train)
-    
-    print(f"   Decision Tree Accuracy: {dt.score(X_test, y_test):.4f}")
-    
-    # Xuất luật ra màn hình
-    # Luật này sẽ cho bạn thấy máy nó 'nhìn' vào đâu để phân loại
-    # VD: Nếu Monetary > 5000 -> Diamond; Nếu Pct_Fashion > 0.5 -> Fashion
-    rules = export_text(dt, feature_names=list(X.columns))
-    print("\n--- EXPLAINABLE RULES (WHITE BOX) ---")
-    print(rules)
-    print("-------------------------------------")
-    
-    # ==========================================================================
-    # PART B: RANDOM FOREST (MODEL DỰ ĐOÁN CHÍNH)
-    # ==========================================================================
-    print("\n🌲 Training Random Forest Pipeline (For Deployment)...")
-    
-    rf = RandomForestClassifier(n_estimators=200, max_depth=12, random_state=42)
-    rf.fit(X_train, y_train)
-    
-    y_pred = rf.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    print(f"   Random Forest Accuracy: {acc:.4f}")
-    
-    # Báo cáo chi tiết
-    # Vì tên label dài, ta in classification report để xem độ chính xác từng nhóm
-    print("\nClassification Report:")
-    print(classification_report(y_test, y_pred))
-    
-    # Feature Importance (Yếu tố nào định hình nên Persona?)
-    # Ví dụ: Để phân biệt nhóm "Tech" vs "Fashion", cột Pct_Technology sẽ quan trọng
-    importances = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False)
-    print("\n📊 Top 8 Important Features:")
-    print(importances.head(8))
-    
-    # Lưu Model
-    joblib.dump(rf, os.path.join(INPUT_DIR, "rf_production_model.joblib"))
-    print(f"\n✅ Production Model saved to {INPUT_DIR}/rf_production_model.joblib")
-    
-    # --- DEMO DỰ ĐOÁN KHÁCH MỚI ---
-    print("\n🔮 Demo Prediction (Test Case):")
-    # Lấy thử 1 khách hàng từ tập test để dự đoán
-    sample_customer = X_test.iloc[0:1]
-    true_label = y_test.iloc[0]
-    pred_label = rf.predict(sample_customer)[0]
-    
-    print(f"   Features: {sample_customer.to_dict(orient='records')[0]}")
-    print(f"   True Label:      {true_label}")
-    print(f"   Predicted Label: {pred_label}")
 
-if __name__ == "__main__":
-    train_models()
+def load_data(path=LABELED_CSV):
+	if not os.path.exists(path):
+		raise FileNotFoundError(f"Labeled data not found: {path}")
+	return pd.read_csv(path)
+
+
+def prepare_features(df, target='cluster'):
+	# select numeric columns (exclude id and label cols)
+	drop = {'customer_id', 'Cluster', 'Segment'}
+	numeric = df.select_dtypes(include=[np.number]).columns.tolist()
+	features = [c for c in numeric if c not in drop]
+	X = df[features].copy()
+
+	if target == 'cluster':
+		y = df['Cluster'].values
+	else:
+		le = LabelEncoder()
+		y = le.fit_transform(df['Segment'].astype(str).values)
+
+	return X, y
+
+
+def evaluate(model, X_train, X_test, y_train, y_test, cv=5):
+	model.fit(X_train, y_train)
+	y_pred = model.predict(X_test)
+	print(classification_report(y_test, y_pred, zero_division=0))
+	acc = accuracy_score(y_test, y_pred)
+	scores = cross_val_score(model, pd.concat([X_train, X_test]), np.concatenate([y_train, y_test]), cv=cv)
+	print(f"Accuracy (holdout): {acc:.4f}")
+	print(f"CV ({cv}-fold) accuracy: {scores.mean():.4f} ± {scores.std():.4f}")
+	return acc, scores
+
+
+def main(args):
+	df = load_data(args.labeled)
+	X, y = prepare_features(df, target=args.target)
+	print(f"Loaded {len(df)} rows, using {X.shape[1]} numeric features")
+
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+	# Decision Tree
+	print('\n--- Decision Tree ---')
+	dt = DecisionTreeClassifier(max_depth=args.dt_max_depth, random_state=42)
+	dt_acc, dt_scores = evaluate(dt, X_train, X_test, y_train, y_test, cv=args.cv)
+
+	# Random Forest
+	print('\n--- Random Forest ---')
+	rf = RandomForestClassifier(n_estimators=args.rf_estimators, random_state=42, n_jobs=-1)
+	rf_acc, rf_scores = evaluate(rf, X_train, X_test, y_train, y_test, cv=args.cv)
+
+	# save models
+	save_dir = args.save_dir or PIPELINE_DIR
+	os.makedirs(save_dir, exist_ok=True)
+	dt_path = os.path.join(save_dir, f"decision_tree_{args.target}.joblib")
+	rf_path = os.path.join(save_dir, f"random_forest_{args.target}.joblib")
+	joblib.dump(dt, dt_path)
+	joblib.dump(rf, rf_path)
+	print(f"\nSaved Decision Tree -> {dt_path}")
+	print(f"Saved Random Forest -> {rf_path}")
+
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--labeled', type=str, default=LABELED_CSV, help='Path to data_labeled.csv')
+	parser.add_argument('--target', choices=['cluster', 'segment'], default='cluster', help='Predict cluster or segment')
+	parser.add_argument('--save-dir', type=str, default=None, help='Directory to save trained models')
+	parser.add_argument('--dt-max-depth', type=int, default=None, help='Max depth for decision tree')
+	parser.add_argument('--rf-estimators', type=int, default=100, help='Number of trees for random forest')
+	parser.add_argument('--cv', type=int, default=5, help='Cross-validation folds')
+	args = parser.parse_args()
+	main(args)
+
