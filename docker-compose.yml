@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: retail-analytics-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STREAMLIT_SERVER_PORT=8501
+    command: streamlit run app/app.py
+    restart: unless-stopped
+
+  # Optional: PostgreSQL database service
+  postgres:
+    image: postgres:14-alpine
+    container_name: retail-analytics-db
+    environment:
+      POSTGRES_DB: retail
+      POSTGRES_USER: retail_user
+      POSTGRES_PASSWORD: retail_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

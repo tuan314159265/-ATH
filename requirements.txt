@@ -1,0 +1,28 @@
+# Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Database
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.13.0
+plotly>=5.17.0
+
+# Streamlit Dashboard
+streamlit>=1.28.0
+streamlit-option-menu>=0.3.2
+
+# Data Utilities
+Faker>=18.0.0
+python-dotenv>=1.0.0
+
+# Development & Optional
+jupyter>=1.0.0
+ipython>=8.0.0

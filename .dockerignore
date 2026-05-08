@@ -1,0 +1,61 @@
+# Python cache
+__pycache__
+*.py[cod]
+*.egg-info
+*.eggs
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/cache/
+.streamlit/secrets.toml
+
+# Data
+*.csv
+*.xlsx
+*.json
+*.sqlite
+*.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Development
+.env
+.env.local
+
+# Node (if using any frontend tools)
+node_modules/
