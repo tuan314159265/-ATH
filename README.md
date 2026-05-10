@@ -1,4 +1,4 @@
-# 🛍️ Retail Customer Analytics Platform
+#  Retail Customer Analytics Platform
 
 > A comprehensive end-to-end data analytics solution for retail customer segmentation and predictive analysis
 
@@ -9,43 +9,43 @@
 
 ---
 
-## 📋 Project Overview
+##  Project Overview
 
 This is a **production-ready data analytics platform** that processes retail sales data from multiple sources, builds a data warehouse, and performs advanced customer segmentation using machine learning. The project demonstrates end-to-end data engineering and ML capabilities with a professional interactive dashboard.
 
 ### Key Achievements
 
-- ✅ **Multi-source ETL Pipeline**: Integrates 3 different retail datasets (Kaggle, ORD API, UCI Online Retail)
-- ✅ **Data Warehouse**: Star schema implementation with PostgreSQL
-- ✅ **Advanced Analytics**: RFM analysis with outlier detection and preprocessing
-- ✅ **Customer Segmentation**: K-means clustering with optimal K selection
-- ✅ **Predictive Models**: Decision Tree & Random Forest classifiers with cross-validation
-- ✅ **Interactive Dashboard**: Streamlit web application for data exploration and visualization
-- ✅ **Production Deployment**: Ready for Streamlit Cloud, Docker, or local deployment
+-  **Multi-source ETL Pipeline**: Integrates 3 different retail datasets (Kaggle, ORD API, UCI Online Retail)
+-  **Data Warehouse**: Star schema implementation with PostgreSQL
+-  **Advanced Analytics**: RFM analysis with outlier detection and preprocessing
+-  **Customer Segmentation**: K-means clustering with optimal K selection
+-  **Predictive Models**: Decision Tree & Random Forest classifiers with cross-validation
+-  **Interactive Dashboard**: Streamlit web application for data exploration and visualization
+-  **Production Deployment**: Ready for Streamlit Cloud, Docker, or local deployment
 
 ---
 
-## 🎯 Features
+##  Features
 
-### 📊 Data Pipeline
+###  Data Pipeline
 - **Data Integration**: Combines Kaggle retail sales, ORD API orders, and UCI e-commerce data
 - **Data Cleaning**: Automated handling of missing values, duplicates, and inconsistencies
 - **Data Validation**: Quality checks and data profiling
 - **ETL Orchestration**: Streamlined pipeline execution
 
-### 🔍 Analytics
+###  Analytics
 - **RFM Analysis**: Recency, Frequency, Monetary value calculations for customer behavior
 - **Customer Segmentation**: K-means clustering with elbow method optimization
 - **Outlier Detection**: Statistical methods for data quality
 - **Behavioral Insights**: Customer lifetime value and purchase patterns
 
-### 🤖 Machine Learning
+###  Machine Learning
 - **Unsupervised Learning**: K-means clustering for customer segments
 - **Supervised Learning**: Decision Tree and Random Forest for classification
 - **Model Evaluation**: Cross-validation with multiple metrics (F1, Precision, Recall)
 - **Feature Engineering**: Automated transformation and scaling
 
-### 📈 Visualization & Dashboard
+###  Visualization & Dashboard
 - **Interactive Dashboard**: Real-time data exploration with Streamlit
 - **Visualizations**: Cluster analysis, RFM distributions, model performance metrics
 - **Comprehensive Reporting**: Exportable insights and recommendations
@@ -53,7 +53,7 @@ This is a **production-ready data analytics platform** that processes retail sal
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -95,7 +95,7 @@ This is a **production-ready data analytics platform** that processes retail sal
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 retail-analytics-platform/
@@ -166,7 +166,7 @@ retail-analytics-platform/
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -214,36 +214,36 @@ docker run -p 8501:8501 retail-analytics
 
 ---
 
-## 📊 Dashboard Pages
+##  Dashboard Pages
 
-### 1. **Data Overview** 📈
+### 1. **Data Overview** 
 - Dataset statistics and summaries
 - Data quality metrics
 - Source comparison analysis
 
-### 2. **RFM Analysis** 💳
+### 2. **RFM Analysis** 
 - Recency, Frequency, Monetary distributions
 - Customer value segments
 - Behavioral patterns
 
-### 3. **Customer Segments** 🎯
+### 3. **Customer Segments** 
 - K-means clustering results
 - Segment characteristics
 - Interactive cluster exploration
 
-### 4. **Model Performance** 🤖
+### 4. **Model Performance** 
 - Decision Tree & Random Forest metrics
 - Confusion matrices and ROC curves
 - Feature importance analysis
 
-### 5. **Insights & Recommendations** 💡
+### 5. **Insights & Recommendations** 
 - Key findings and trends
 - Actionable business recommendations
 - Export reports
 
 ---
 
-## 🔧 Technical Stack
+##  Technical Stack
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
@@ -258,7 +258,7 @@ docker run -p 8501:8501 retail-analytics
 
 ---
 
-## 📚 Data Sources
+##  Data Sources
 
 | Source | Records | Key Fields |
 |--------|---------|-----------|
@@ -268,7 +268,7 @@ docker run -p 8501:8501 retail-analytics
 
 ---
 
-## 🎓 Analysis Methodology
+##  Analysis Methodology
 
 ### RFM Analysis
 - **Recency**: Days since last purchase
@@ -290,7 +290,7 @@ docker run -p 8501:8501 retail-analytics
 
 ---
 
-## 📊 Key Metrics
+## Key Metrics
 
 ```
 ✓ Data Coverage: 1.2M+ transactions across 3 sources
@@ -303,7 +303,7 @@ docker run -p 8501:8501 retail-analytics
 
 ---
 
-## 🛠️ Customization
+## Customization
 
 ### Modify RFM Parameters
 Edit [modeling/rfm_analysis.py](modeling/rfm_analysis.py) to adjust:
@@ -325,7 +325,7 @@ Modify files in [app/pages/](app/pages/) to:
 
 ---
 
-## 📈 Production Deployment
+## Production Deployment
 
 ### Deploy to Streamlit Cloud
 
@@ -355,7 +355,7 @@ docker run -p 8501:8501 \
 
 ---
 
-## 📋 Model Performance
+## Model Performance
 
 ### Decision Tree Classifier
 ```
@@ -375,18 +375,18 @@ F1-Score:  87.3%
 
 ---
 
-## 🔐 Security & Best Practices
+##  Security & Best Practices
 
-- ✅ Environment variables for sensitive data
-- ✅ Input validation on all data pipelines
-- ✅ SQL injection prevention with parameterized queries
-- ✅ Secure secrets management
-- ✅ Cross-validation for model validation
-- ✅ Regular data quality checks
+- Environment variables for sensitive data
+- Input validation on all data pipelines
+- SQL injection prevention with parameterized queries
+- Secure secrets management
+- Cross-validation for model validation
+- Regular data quality checks
 
 ---
 
-## 📝 Usage Examples
+##  Usage Examples
 
 ### Load and analyze data
 ```python
@@ -412,7 +412,7 @@ train_models(args)
 
 ---
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Issue: Database connection fails
 ```bash
@@ -435,7 +435,7 @@ streamlit run app/app.py
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 - [Data Pipeline Documentation](docs/PIPELINE.md)
 - [API Reference](docs/API.md)
@@ -444,7 +444,7 @@ streamlit run app/app.py
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 This project demonstrates professional data science capabilities. For improvements:
 
@@ -456,7 +456,7 @@ This project demonstrates professional data science capabilities. For improvemen
 
 ---
 
-## 📄 License
+##  License
 
 This project is provided as-is for portfolio and educational purposes.
 
@@ -465,22 +465,11 @@ This project is provided as-is for portfolio and educational purposes.
 ## 👤 Author
 
 **Your Name**
-- 📧 Email: your.email@example.com
-- 🔗 LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
-- 🐙 GitHub: [@YourUsername](https://github.com/yourusername)
+-  Email: Tw52100725@gmail.com
+-  LinkedIn: [@tuantran](www.linkedin.com/in/tuantran-1aa731308)
+-  GitHub: [@tuan31415](https://github.com/tuan314159265)
 
 ---
-
-## 🎉 Project Highlights for CV
-
-### Technical Skills Demonstrated
-- **Data Engineering**: ETL pipelines, data integration, warehouse design
-- **Data Science**: RFM analysis, customer segmentation, clustering
-- **Machine Learning**: Classification models, cross-validation, hyperparameter tuning
-- **Backend**: Python, SQL, database design, API integration
-- **Frontend**: Streamlit, interactive dashboards, data visualization
-- **DevOps**: Docker, deployment, environment management
-- **Software Engineering**: Modular code, code organization, documentation
 
 ### Business Value
 - Multi-source data consolidation
